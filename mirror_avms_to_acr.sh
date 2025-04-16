@@ -1,23 +1,23 @@
 #!/bin/bash
-# This script mirrors Azure Verified Modules (AVMs) to an Azure Container Registry (ACR).
 set -euo pipefail
 
 echo "🟢 Starting AVM mirror job..."
 echo "💬 ACR Name: $ACR_NAME"
-echo "💬 Cloning Azure Verified Modules..."
 
+# Define repo using token-based authentication (GitHub expects token as password)
+AVM_REPO="https://x-access-token:$GITHUB_PAT@github.com/Azure/Verified-Modules.git"
+AVM_FOLDER="Verified-Modules/bicep"
+ACR_URL="$ACR_NAME.azurecr.io"
+
+echo "💬 Cloning Azure Verified Modules..."
 rm -rf Verified-Modules
-git clone "https://$GITHUB_PAT:x-oauth-basic@github.com/Azure/Verified-Modules.git" || {
+git clone "$AVM_REPO" || {
   echo "❌ Git clone failed"
   exit 1
 }
 
 echo "📁 Repo cloned successfully"
-
-AVM_FOLDER="Verified-Modules/bicep"
-ACR_URL="$ACR_NAME.azurecr.io"
-
-echo "🚀 Publishing modules to $ACR_URL"
+echo "🚀 Publishing all Bicep AVMs to $ACR_URL..."
 
 for dir in $AVM_FOLDER/*/; do
   MODULE_NAME=$(basename "$dir")
