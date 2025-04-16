@@ -4,7 +4,7 @@
 ACR_NAME=${ACR_NAME:-"avmmodulesbc"}
 ACR_URL="$ACR_NAME.azurecr.io"
 AVM_FOLDER="Verified-Modules/bicep"
-AVM_REPO="https://github.com/Azure/Verified-Modules.git"
+AVM_REPO="https://$GITHUB_PAT@github.com/Azure/Verified-Modules.git"
 
 # Login assumed handled by container context (use managed identity or service principal if needed)
 
