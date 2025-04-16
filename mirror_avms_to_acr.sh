@@ -1,4 +1,5 @@
 #!/bin/bash
+# This script mirrors Azure Verified Modules (AVMs) to an Azure Container Registry (ACR).
 set -euo pipefail
 
 echo "🟢 Starting AVM mirror job..."
