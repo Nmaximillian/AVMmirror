@@ -7,7 +7,7 @@ echo "💬 ACR Name: $ACR_NAME"
 echo "💬 Cloning Azure Verified Modules..."
 
 rm -rf Verified-Modules
-git clone "https://$GITHUB_PAT@github.com/Azure/Verified-Modules.git" || {
+git clone "https://$GITHUB_PAT:x-oauth-basic@github.com/Azure/Verified-Modules.git" || {
   echo "❌ Git clone failed"
   exit 1
 }
