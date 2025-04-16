@@ -37,11 +37,8 @@ for module in "${AVM_MODULES[@]}"; do
   SOURCE="br:avm/$module"
   TARGET="br:$ACR_URL/modules/$NAME:$VERSION"
 
-  echo "📥 Restoring $SOURCE"
-  az bicep restore --artifact-name "$SOURCE"
-
   echo "📦 Publishing $SOURCE to $TARGET"
-  az bicep publish --file "$HOME/.bicep/modules/avm/$module/main.json" --target "$TARGET"
+  az bicep publish --source "$SOURCE" --target "$TARGET"
 
   echo "✅ Published $NAME@$VERSION"
 done
