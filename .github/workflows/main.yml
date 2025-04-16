@@ -11,6 +11,9 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v3
 
+    - name: List repo contents
+      run: ls -la
+
     - name: Azure Login
       uses: azure/login@v1
       with:
@@ -22,4 +25,4 @@ jobs:
           --registry avmmodulesbc \
           --image avm-mirror:latest \
           --file Dockerfile \
-          https://github.com/${{ github.repository }}.git
+          https://github.com/${{ github.repository }}.git#main
