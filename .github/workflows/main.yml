@@ -19,7 +19,7 @@ jobs:
     - name: Build and push image to ACR
       run: |
         az acr build \
-          --registry ${{ secrets.ACR_NAME }} \
+          --registry avmmodulesbc \
           --image avm-mirror:latest \
           --file Dockerfile \
           https://github.com/${{ github.repository }}.git
