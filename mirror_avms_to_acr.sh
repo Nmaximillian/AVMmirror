@@ -1,48 +1,49 @@
 #!/bin/bash
 set -euo pipefail
-
 echo "🟢 Starting AVM mirror job..."
 echo "💬 ACR Name: $ACR_NAME"
 
-# Define repo using token-based authentication (GitHub expects token as password)
-AVM_REPOS="https://x-access-token:$GITHUB_PAT@github.com/Azure/Verified-Modules.git"
-AVM_FOLDER="Verified-Modules/bicep"
 ACR_URL="$ACR_NAME.azurecr.io"
 
-echo "💬 Cloning Azure Verified Modules..."
-rm -rf Verified-Modules
-git clone "$AVM_REPOS" || {
-  echo "❌ Git clone failed"
-  exit 1
-}
+echo "🟢 Starting AVM module mirror from Microsoft public registry to $ACR_URL"
 
-echo "📁 Repo cloned successfully"
-echo "🚀 Publishing all Bicep AVMs to $ACR_URL..."
+AVM_MODULES=(
+  "res.authorization/roleassignment:0.1.2"
+  "res.compute/virtualmachine:0.4.0"
+  "res.compute/virtualmachinescaleset:0.2.2"
+  "res.compute/availabilityset:0.1.1"
+  "res.containers/containerregistry:0.1.1"
+  "res.keyvault/keyvault:0.3.2"
+  "res.monitor/diagnosticsetting:0.2.2"
+  "res.network/bastionhost:0.3.2"
+  "res.network/loadbalancer:0.3.0"
+  "res.network/networkinterface:0.2.2"
+  "res.network/networksecuritygroup:0.2.2"
+  "res.network/privateendpoint:0.2.3"
+  "res.network/publicipaddress:0.3.1"
+  "res.network/virtualnetwork:0.3.1"
+  "res.network/virtualnetworkpeering:0.1.2"
+  "res.resources/deploymentscript:0.1.2"
+  "res.resources/resourcegroup:0.1.1"
+  "res.sql/servers:0.3.2"
+  "res.storage/storageaccount:0.3.3"
+  "res.web/serverfarm:0.2.1"
+  "res.web/webapp:0.3.2"
+)
 
-for dir in $AVM_FOLDER/*/; do
-  MODULE_NAME=$(basename "$dir")
-  MODULE_PATH="$dir/main.bicep"
-  METADATA_FILE="$dir/metadata.json"
+for module in "${AVM_MODULES[@]}"; do
+  NAME=$(echo "$module" | cut -d ':' -f1 | sed 's|.*/||')
+  VERSION=$(echo "$module" | cut -d ':' -f2)
+  SOURCE="br:avm/$module"
+  TARGET="br:$ACR_URL/modules/$NAME:$VERSION"
 
-  if [[ -f "$MODULE_PATH" && -f "$METADATA_FILE" ]]; then
-    VERSION=$(jq -r '.version' "$METADATA_FILE")
+  echo "📥 Restoring $SOURCE"
+  az bicep restore --artifact-name "$SOURCE"
 
-    if [[ "$VERSION" == "null" || -z "$VERSION" ]]; then
-      echo "⚠️ Skipping $MODULE_NAME (missing version)"
-      continue
-    fi
+  echo "📦 Publishing $SOURCE to $TARGET"
+  az bicep publish --file "$HOME/.bicep/modules/avm/$module/main.json" --target "$TARGET"
 
-    TARGET="br:$ACR_URL/modules/$MODULE_NAME:$VERSION"
-    echo "📦 Publishing $MODULE_NAME@$VERSION -> $TARGET"
-
-    az bicep publish "$MODULE_PATH" --target "$TARGET" || {
-      echo "❌ Failed to publish $MODULE_NAME"
-      exit 1
-    }
-
-  else
-    echo "⚠️ Skipping $MODULE_NAME (missing main.bicep or metadata.json)"
-  fi
+  echo "✅ Published $NAME@$VERSION"
 done
 
-echo "✅ All modules published successfully"
+echo "🎉 All AVM modules mirrored successfully to $ACR_URL"
