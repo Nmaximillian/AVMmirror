@@ -5,13 +5,13 @@ echo "🟢 Starting AVM mirror job..."
 echo "💬 ACR Name: $ACR_NAME"
 
 # Define repo using token-based authentication (GitHub expects token as password)
-AVM_REPO="https://x-access-token:$GITHUB_PAT@github.com/Azure/Verified-Modules.git"
+AVM_REPOS="https://x-access-token:$GITHUB_PAT@github.com/Azure/Verified-Modules.git"
 AVM_FOLDER="Verified-Modules/bicep"
 ACR_URL="$ACR_NAME.azurecr.io"
 
 echo "💬 Cloning Azure Verified Modules..."
 rm -rf Verified-Modules
-git clone "$AVM_REPO" || {
+git clone "$AVM_REPOS" || {
   echo "❌ Git clone failed"
   exit 1
 }
