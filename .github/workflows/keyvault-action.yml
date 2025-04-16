@@ -1,0 +1,24 @@
+name: Deploy Key Vault with AVM
+
+on:
+  workflow_dispatch:  # allows manual triggering
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS1 }}
+
+    - name: Deploy Key Vault
+      run: |
+        az deployment group create \
+          --resource-group avm-test-rg \
+          --template-file main.bicep \
+          --parameters vaultName=myavmkeyvault
