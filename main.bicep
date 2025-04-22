@@ -1,4 +1,4 @@
-module vault 'br/public:avm/res/key-vault/vault:0.3.2' = {
+module vault 'br/public:avm/res/key-vault/vault:0.12.1' = {
   name: 'vaultDeployment'
   params: {
     // Required parameters
