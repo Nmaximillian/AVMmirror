@@ -1,8 +1,8 @@
-module keyVault 'br/public:avm/res/key-vault/vault:0.3.2' = {
+module vault 'br/public:avm/res/key-vault/vault:0.3.2' = {
   name: 'vaultDeployment'
   params: {
     // Required parameters
-    name: 'kvtestdeployment'
+    name: 'testkv'
     // Non-required parameters
     enablePurgeProtection: false
     enableRbacAuthorization: true
