@@ -21,4 +21,3 @@ jobs:
         az deployment group create \
           --resource-group avm-test-rg \
           --template-file main.bicep \
-          --parameters vaultName=testavmkeyvault
