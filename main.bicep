@@ -1,6 +1,3 @@
-param location string = resourceGroup().location
-param vaultName string = 'kvtestdeployment'
-
 module keyVault 'br/public:avm/res/key-vault/vault:0.3.2' = {
   name: 'vaultDeployment'
   params: {
